@@ -1,0 +1,26 @@
+{
+  "short_name": "Scoring",
+  "name": "Financiera Digital — Scoring Crediticio",
+  "description": "Sistema de calificación crediticia para empleados en relación de dependencia",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#090C11",
+  "background_color": "#090C11",
+  "orientation": "portrait-primary",
+  "lang": "es-AR",
+  "categories": ["finance", "business"]
+}
