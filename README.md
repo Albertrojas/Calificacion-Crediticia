@@ -1,0 +1,369 @@
+[index.html](https://github.com/user-attachments/files/28232008/index.html)
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="theme-color" content="#090C11"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Scoring"/>
+<title>Financiera Digital · Scoring</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#090C11;color:#D8E0EC;font-family:Arial,sans-serif;overscroll-behavior:none;padding-bottom:70px}
+.header{background:#101828;border-bottom:1px solid #1E2D42;padding:14px 14px 10px;position:sticky;top:0;z-index:100}
+.mono{font-family:monospace}
+.card{background:#101828;border:1px solid #1E2D42;border-radius:12px;margin-bottom:10px;overflow:hidden}
+.navbar{position:fixed;bottom:0;left:0;right:0;background:#101828;border-top:1px solid #1E2D42;display:flex;z-index:200}
+.navbtn{flex:1;padding:10px 0 8px;background:none;border:none;color:#3A4A60;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-family:Arial}
+.navbtn.active{color:#FFB800;font-weight:700}
+.screen{padding:12px;display:none}
+.screen.active{display:block}
+input[type=number]{background:#131C28;border:1px solid #1E2D42;border-radius:8px;padding:10px 12px;color:#D8E0EC;font-size:16px;width:100%;font-family:Arial}
+.tag{display:inline-block;border-radius:6px;padding:2px 8px;font-size:11px;font-family:monospace}
+.btn-reset{background:#131C28;color:#3A4A60;border:1px solid #1E2D42;border-radius:8px;padding:11px;width:100%;font-size:12px;font-family:monospace;cursor:pointer;margin-top:4px}
+</style>
+</head>
+<body>
+
+<!-- SCORING -->
+<div id="s-scoring" class="screen active">
+  <div class="header" id="score-header">
+    <div class="mono" style="font-size:10px;letter-spacing:3px;color:#3A4A60;margin-bottom:8px">SCORING CREDITICIO</div>
+    <div id="zona-badge" style="background:#00E5A015;border:1px solid #00E5A044;border-radius:10px;padding:10px 14px;text-align:center">
+      <div id="zona-decision" class="mono" style="font-size:10px;letter-spacing:2px;color:#00E5A0;margin-bottom:3px">AUTO-APROBADO</div>
+      <div id="zona-titulo" style="font-size:16px;font-weight:700;color:#D8E0EC">Perfil Excelente</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+        <div style="background:#131C28;border-radius:999px;height:8px;flex:1;overflow:hidden">
+          <div id="score-bar" style="background:#00E5A0;width:0%;height:100%;border-radius:999px;transition:width .5s"></div>
+        </div>
+        <span id="score-num" class="mono" style="font-size:20px;font-weight:700;color:#00E5A0;min-width:44px">0</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:#1E2D42;font-family:monospace;margin-top:2px;padding:0 2px">
+        <span>0</span><span>30</span><span>50</span><span>65</span><span>80</span><span>100</span>
+      </div>
+    </div>
+    <div id="productos-header" style="display:flex;gap:8px;margin-top:8px">
+      <div style="flex:1;background:#131C28;border-radius:8px;padding:7px 10px;text-align:center">
+        <div style="font-size:10px;color:#3A4A60;margin-bottom:2px">Monto máx.</div>
+        <div id="monto-max-h" style="font-size:14px;color:#00E5A0;font-weight:700">$1.000.000</div>
+      </div>
+      <div style="flex:1;background:#131C28;border-radius:8px;padding:7px 10px;text-align:center">
+        <div style="font-size:10px;color:#3A4A60;margin-bottom:2px">Plazos</div>
+        <div id="plazos-h" style="font-size:12px;color:#00E5A0;font-weight:700">3/6/9/12 cuotas</div>
+      </div>
+    </div>
+  </div>
+  <div id="criterios-container" style="padding:12px 12px 0"></div>
+  <div style="padding:0 12px"><button class="btn-reset" onclick="resetScoring()">REINICIAR EVALUACIÓN</button></div>
+</div>
+
+<!-- CALCULADORA -->
+<div id="s-calc" class="screen">
+  <div style="padding:12px">
+    <div class="mono" style="font-size:10px;letter-spacing:3px;color:#3A4A60;margin-bottom:12px">CALCULADORA DE PAGO</div>
+    <div class="card">
+      <div style="padding:14px 16px">
+        <div style="margin-bottom:14px">
+          <label style="font-size:11px;color:#3A4A60;display:block;margin-bottom:6px;font-family:monospace">SUELDO NETO ($)</label>
+          <input type="number" inputmode="numeric" id="inp-sueldo" placeholder="ej: 450000" oninput="calcPago()"/>
+          <div id="cuota-max-lbl" style="font-size:12px;color:#00E5A0;margin-top:5px;display:none"></div>
+        </div>
+        <div style="margin-bottom:14px">
+          <label style="font-size:11px;color:#3A4A60;display:block;margin-bottom:6px;font-family:monospace">MONTO SOLICITADO ($)</label>
+          <input type="number" inputmode="numeric" id="inp-monto" placeholder="ej: 700000" oninput="calcPago()"/>
+        </div>
+        <div>
+          <label style="font-size:11px;color:#3A4A60;display:block;margin-bottom:6px;font-family:monospace">SCORE (de la pantalla anterior)</label>
+          <input type="number" inputmode="numeric" id="inp-score" placeholder="ej: 78" oninput="calcPago()"/>
+          <div id="zona-calc-lbl" style="margin-top:6px;display:none"></div>
+        </div>
+      </div>
+    </div>
+    <div id="tabla-cuotas" style="display:none">
+      <div class="card">
+        <div style="padding:10px 16px;border-bottom:1px solid #1E2D42">
+          <div class="mono" style="font-size:10px;letter-spacing:2px;color:#FFB800">TABLA DE CUOTAS POR PLAZO</div>
+        </div>
+        <div id="filas-cuotas"></div>
+      </div>
+    </div>
+    <div style="background:#1A0D2A;border:1px solid #A855F733;border-radius:12px;padding:14px;margin-top:4px">
+      <div class="mono" style="font-size:10px;color:#A855F7;letter-spacing:2px;margin-bottom:8px">REGLA DE CAPACIDAD DE PAGO</div>
+      <div style="font-size:12px;color:#5A7090;line-height:1.6">La cuota mensual <span style="color:#A855F7">nunca puede superar el 30% del sueldo neto</span>, independientemente del score.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ZONAS -->
+<div id="s-zonas" class="screen">
+  <div style="padding:12px">
+    <div class="mono" style="font-size:10px;letter-spacing:3px;color:#3A4A60;margin-bottom:12px">ZONAS DE RIESGO</div>
+    <div id="zonas-container"></div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div id="s-check" class="screen">
+  <div style="padding:12px">
+    <div class="mono" style="font-size:10px;letter-spacing:3px;color:#3A4A60;margin-bottom:12px">CHECKLIST OPERATIVO</div>
+    <div id="checklist-container"></div>
+    <button class="btn-reset" onclick="resetChecklist()">REINICIAR CHECKLIST</button>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <button class="navbtn active" id="nb-scoring" onclick="showTab('scoring')"><span style="font-size:20px">⭐</span>Scoring</button>
+  <button class="navbtn" id="nb-calc" onclick="showTab('calc')"><span style="font-size:20px">💰</span>Pago</button>
+  <button class="navbtn" id="nb-zonas" onclick="showTab('zonas')"><span style="font-size:20px">🗂️</span>Zonas</button>
+  <button class="navbtn" id="nb-check" onclick="showTab('check')"><span style="font-size:20px">✅</span>Checklist</button>
+</nav>
+
+<script>
+const TNA=0.95;
+const ZONAS=[
+  {tag:"EXCELENTE",min:80,max:100,color:"#00E5A0",titulo:"Perfil Excelente",decision:"AUTO-APROBADO",montoMax:1000000,tnaAdj:0,plazos:[3,6,9,12],desc:"Sin revisión manual. Acceso al monto máximo y todos los plazos."},
+  {tag:"BUENO",min:65,max:79,color:"#7FD94A",titulo:"Perfil Bueno",decision:"APROBADO",montoMax:800000,tnaAdj:0,plazos:[3,6,9,12],desc:"Aprobado con condiciones estándar. Monto hasta el 80% del máximo."},
+  {tag:"MEDIO",min:50,max:64,color:"#FFB800",titulo:"Perfil Medio",decision:"REVISIÓN MANUAL",montoMax:600000,tnaAdj:0.05,plazos:[3,6,9],desc:"Requiere revisión del analista. Monto reducido. TNA +5%."},
+  {tag:"RIESGO",min:30,max:49,color:"#FF6B2B",titulo:"Riesgo Medio-Alto",decision:"CONDICIONADO",montoMax:300000,tnaAdj:0.10,plazos:[3,6],desc:"Solo monto mínimo. Requiere garante o débito automático."},
+  {tag:"RECHAZADO",min:0,max:29,color:"#FF3B3B",titulo:"Alto Riesgo",decision:"RECHAZADO",montoMax:0,tnaAdj:0,plazos:[],desc:"No aplica producto. Puede reingresar en 6 meses."}
+];
+const CATS=[
+  {id:"identidad",nombre:"Identidad y Domicilio",icono:"🪪",criterios:[
+    {id:"dni_f",label:"DNI frente — legible, vigente",pts:5,tipo:"bin",req:true,nota:"Obligatorio."},
+    {id:"dni_d",label:"DNI dorso — legible, sin alteraciones",pts:3,tipo:"bin",req:true,nota:"Obligatorio junto al frente."},
+    {id:"selfie",label:"Selfie sosteniendo DNI (liveness check)",pts:4,tipo:"bin",req:false,nota:"Reduce riesgo de suplantación."},
+    {id:"serv",label:"Servicio a nombre del titular (90 días)",pts:5,tipo:"bin",req:true,nota:"Luz / Gas / Agua."},
+    {id:"dom_ok",label:"Domicilio del servicio coincide",pts:3,tipo:"bin",req:false,nota:"Si es familiar conviviente, aceptar con nota."}
+  ]},
+  {id:"ingresos",nombre:"Capacidad de Ingresos",icono:"💰",criterios:[
+    {id:"recibo",label:"Recibo de sueldo — últimos 2 meses",pts:15,tipo:"bin",req:true,nota:"OBLIGATORIO para este producto."},
+    {id:"ant_12",label:"Antigüedad laboral ≥ 12 meses",pts:8,tipo:"exc",grupo:"ant",nota:"Máxima estabilidad."},
+    {id:"ant_6",label:"Antigüedad laboral 6–11 meses",pts:4,tipo:"exc",grupo:"ant",nota:"Menor estabilidad."},
+    {id:"ant_0",label:"Antigüedad laboral < 6 meses",pts:0,tipo:"exc",grupo:"ant",nota:"No suma puntos."},
+    {id:"cuota30",label:"Cuota solicitada ≤ 30% del sueldo neto",pts:7,tipo:"bin",req:false,nota:"Ver calculadora de pago."}
+  ]},
+  {id:"equifax",nombre:"Historial Equifax / Veraz",icono:"📊",criterios:[
+    {id:"eq_a",label:"Score Veraz 700–999 + BCRA Situación 1",pts:25,tipo:"exc",grupo:"eq",nota:"Perfil excelente."},
+    {id:"eq_b",label:"Score Veraz 500–699 + BCRA Situación 1",pts:18,tipo:"exc",grupo:"eq",nota:"Buen perfil."},
+    {id:"eq_c",label:"Score Veraz 300–499 + BCRA Situación 2",pts:8,tipo:"exc",grupo:"eq",nota:"Historial con observaciones."},
+    {id:"eq_d",label:"BCRA Situación 3 — con problemas",pts:2,tipo:"exc",grupo:"eq",nota:"Solo microcrédito."},
+    {id:"eq_e",label:"BCRA Situación 4 o 5 — RECHAZO",pts:-50,tipo:"exc",grupo:"eq",nota:"⚠ RECHAZO AUTOMÁTICO."},
+    {id:"hist_int",label:"Cliente recurrente interno — buen pago",pts:5,tipo:"bin",req:false,nota:"Crédito previo pagado en término."}
+  ]},
+  {id:"referencias",nombre:"Referencias Personales",icono:"👥",criterios:[
+    {id:"ref1",label:"Referencia 1 — nombre, tel., relación",pts:4,tipo:"bin",req:true,nota:"Mínimo 2 referencias."},
+    {id:"ref2",label:"Referencia 2 — nombre, tel., relación dif.",pts:4,tipo:"bin",req:true,nota:"No puede ser la misma persona."},
+    {id:"ref_ver",label:"Al menos 1 referencia verificada",pts:2,tipo:"bin",req:false,nota:"Ejecutivo llama y confirma."}
+  ]},
+  {id:"respaldo",nombre:"Respaldo y Compromiso",icono:"🔒",criterios:[
+    {id:"debito",label:"Acepta débito automático en CBU/CVU",pts:7,tipo:"bin",req:false,nota:"Reduce mora temprana."},
+    {id:"garante",label:"Garante solidario con recibo de sueldo",pts:5,tipo:"bin",req:false,nota:"Verificación básica del garante."},
+    {id:"emp_pub",label:"Empleador empresa pública o grande",pts:3,tipo:"bin",req:false,nota:"Estado, empresas cotizantes."}
+  ]}
+];
+const PASOS=[
+  {n:"01",color:"#00C2FF",titulo:"Primer Contacto",sub:"WhatsApp / Landing page",items:["Solicitar nombre, DNI, domicilio, teléfono alternativo.","Preguntar monto deseado, plazo (3/6/9/12 cuotas) y motivo.","Confirmar que trabaja en relación de dependencia.","Enviar lista de documentos por WhatsApp.","Registrar lead en CRM."]},
+  {n:"02",color:"#00E5A0",titulo:"Recepción de Documentos",sub:"Verificar antes de avanzar",items:["DNI frente — foto clara. [OBLIGATORIO]","DNI dorso — ídem. [OBLIGATORIO]","Selfie sosteniendo DNI abierto. [RECOMENDADO]","Servicio a nombre del titular, últimos 90 días. [OBLIGATORIO]","Recibo de sueldo últimos 2 meses. [OBLIGATORIO]","Referencia 1: nombre, teléfono, relación. [OBLIGATORIO]","Referencia 2: nombre, teléfono, relación diferente. [OBLIGATORIO]","CBU/CVU para acreditación."]},
+  {n:"03",color:"#FFB800",titulo:"Verificación Documental",sub:"Tarea del analista",items:["Nombre DNI coincide con servicio y declarado.","DNI vigente, no adulterado.","Factura con fecha dentro de 90 días.","Extraer del recibo: sueldo neto, empleador, antigüedad, CUIL.","Calcular cuota y verificar regla del 30%.","Verificar que no haya crédito activo con ese DNI.","Llamar a al menos 1 referencia."]},
+  {n:"04",color:"#A855F7",titulo:"Consulta Equifax / Veraz",sub:"Obligatoria antes de decidir",items:["Ingresar DNI y CUIL en Equifax DecisionPoint Argentina.","Registrar Score Veraz (0–999) y Situación BCRA (1 al 5).","BCRA 4 o 5 → RECHAZO AUTOMÁTICO. Notificar. FIN.","BCRA 3 → Escalar a analista senior.","BCRA 1 o 2 → Continuar con scoring interno.","Guardar PDF del informe en Drive del cliente.","Registrar fecha (no repetir por 6 meses)."]},
+  {n:"05",color:"#FF9500",titulo:"Scoring y Decisión",sub:"Usar pantalla de Scoring",items:["Completar scoring con todos los ítems verificados.","Ingresar datos en la calculadora de capacidad de pago.","Score 80–100: Auto-aprobado → Avanzar a contrato.","Score 65–79: Aprobado → Confirmar monto y plazo.","Score 50–64: Revisión manual → Elevar al área de crédito.","Score 30–49: Condicionado → Informar condiciones especiales.","Score 0–29: Rechazado → Notificación con motivo genérico.","Registrar decisión con score, analista y fecha."]},
+  {n:"06",color:"#FF4444",titulo:"Notificación y Cierre",sub:"Último paso del proceso",items:["Aprobado: enviar por WA monto, cuota y 1° vencimiento.","Con condiciones: detallar condiciones específicas.","Rechazado: mensaje empático, reinicio en 6 meses.","Registrar notificación en CRM.","Si aprobado: enviar link de contrato digital.","Contrato firmado → Alta en cartera → Desembolso."]}
+];
+
+let sel={}, catAbierta="identidad", checks={}, pasoAbierto="01";
+
+function getZona(s){return ZONAS.find(z=>s>=z.min&&s<=z.max)||ZONAS[ZONAS.length-1]}
+function fmtP(n){return"$"+Math.round(n).toLocaleString("es-AR")}
+function calcCuota(m,c,tna){const tm=tna/12;if(tm===0)return m/c;return m*tm*Math.pow(1+tm,c)/(Math.pow(1+tm,c)-1)}
+
+function calcScore(){
+  if(sel["eq_e"])return 0;
+  let t=0;const u={};
+  CATS.forEach(cat=>cat.criterios.forEach(c=>{
+    if(!sel[c.id])return;
+    const k=c.grupo||c.id;
+    if(c.tipo==="exc"){if(!u[k]){u[k]=true;t+=c.pts}}else t+=c.pts;
+  }));
+  return Math.max(0,Math.min(100,t));
+}
+
+function updateScoreUI(){
+  const s=calcScore(), z=getZona(s);
+  document.getElementById("score-num").textContent=s;
+  document.getElementById("score-num").style.color=z.color;
+  document.getElementById("score-bar").style.width=s+"%";
+  document.getElementById("score-bar").style.background=z.color;
+  document.getElementById("zona-badge").style.background=z.color+"15";
+  document.getElementById("zona-badge").style.borderColor=z.color+"44";
+  document.getElementById("zona-decision").textContent=z.decision;
+  document.getElementById("zona-decision").style.color=z.color;
+  document.getElementById("zona-titulo").textContent=z.titulo;
+  document.getElementById("monto-max-h").textContent=z.montoMax>0?fmtP(z.montoMax):"—";
+  document.getElementById("monto-max-h").style.color=z.color;
+  document.getElementById("plazos-h").textContent=z.plazos.length?z.plazos.join("/")+  " cuotas":"—";
+  document.getElementById("plazos-h").style.color=z.color;
+}
+
+function buildScoring(){
+  const cont=document.getElementById("criterios-container");
+  cont.innerHTML="";
+  CATS.forEach(cat=>{
+    const abierta=catAbierta===cat.id;
+    const div=document.createElement("div");
+    div.className="card";
+    div.innerHTML=`
+      <div onclick="toggleCat('${cat.id}')" style="padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:8px;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:18px">${cat.icono}</span>
+          <div>
+            <div class="mono" style="font-size:10px;letter-spacing:2px;color:#FFB800">${cat.nombre}</div>
+          </div>
+        </div>
+        <span style="color:#3A4A60;font-size:14px">${abierta?"▲":"▼"}</span>
+      </div>
+      ${abierta?cat.criterios.map(c=>`
+        <div onclick="toggleItem('${c.id}','${c.tipo||"bin"}','${c.grupo||""}')" style="display:flex;align-items:flex-start;gap:10px;padding:11px 16px;border-top:1px solid #131C28;cursor:pointer;background:${sel[c.id]?(c.pts<0?"#2A0A0A":"#0D1A10"):"transparent"}">
+          <div style="width:20px;height:20px;border-radius:${c.tipo==="exc"?"50%":"5px"};border:2px solid ${sel[c.id]?(c.pts<0?"#FF3B3B":"#FFB800"):"#253040"};background:${sel[c.id]?(c.pts<0?"#FF3B3B":"#FFB800"):"transparent"};flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center">
+            ${sel[c.id]?'<span style="font-size:11px;color:#000;font-weight:900">✓</span>':""}
+          </div>
+          <div style="flex:1">
+            <div style="font-size:12px;color:${sel[c.id]?"#D8E0EC":"#5A7090"};line-height:1.4">${c.label}</div>
+            <div style="font-size:10px;color:#2E4060;margin-top:2px">${c.nota}</div>
+            ${c.req?'<span style="font-size:9px;color:#FF6B2B;font-family:monospace">OBLIGATORIO</span>':""}
+          </div>
+          <div class="mono" style="font-size:13px;font-weight:700;color:${c.pts<0?"#FF3B3B":(sel[c.id]?"#FFB800":"#253040")};min-width:30px;text-align:right">${c.pts>0?"+"+c.pts:c.pts}</div>
+        </div>
+      `).join(""):""}
+    `;
+    cont.appendChild(div);
+  });
+}
+
+function toggleCat(id){catAbierta=catAbierta===id?null:id;buildScoring()}
+function toggleItem(id,tipo,grupo){
+  if(tipo==="exc"&&grupo){CATS.forEach(cat=>cat.criterios.forEach(c=>{if(c.grupo===grupo)delete sel[c.id]}))}
+  if(sel[id])delete sel[id];else sel[id]=true;
+  buildScoring();updateScoreUI();
+}
+function resetScoring(){sel={};buildScoring();updateScoreUI()}
+
+function calcPago(){
+  const s=parseFloat(document.getElementById("inp-sueldo").value)||0;
+  const m=parseFloat(document.getElementById("inp-monto").value)||0;
+  const sc=parseInt(document.getElementById("inp-score").value)||0;
+  const cuotaMax=s*0.30;
+  const lbl=document.getElementById("cuota-max-lbl");
+  if(s>0){lbl.style.display="block";lbl.textContent="Cuota máxima permitida (30%): "+fmtP(cuotaMax)}else{lbl.style.display="none"}
+  const z=getZona(sc);
+  const zlbl=document.getElementById("zona-calc-lbl");
+  if(sc>0){zlbl.style.display="block";zlbl.innerHTML=`<span class="tag" style="background:${z.color}20;border:1px solid ${z.color}44;color:${z.color}">${z.titulo}</span>`}else{zlbl.style.display="none"}
+  const tabla=document.getElementById("tabla-cuotas");
+  const filas=document.getElementById("filas-cuotas");
+  if(s>0&&m>0&&sc>0){
+    tabla.style.display="block";
+    const tna=TNA+z.tnaAdj;
+    const plazos=sc>=65?[3,6,9,12]:sc>=50?[3,6,9]:sc>=30?[3,6]:[];
+    if(plazos.length===0){filas.innerHTML='<div style="padding:14px 16px;color:#FF3B3B;font-size:13px">⛔ Score insuficiente. Sin plazos habilitados.</div>';return}
+    filas.innerHTML=plazos.map(p=>{
+      const cuota=calcCuota(m,p,tna);
+      const entra=cuota<=cuotaMax;
+      const montoAdj=cuotaMax>0?cuotaMax*(Math.pow(1+tna/12,p)-1)/((tna/12)*Math.pow(1+tna/12,p)):0;
+      const montoFinal=Math.min(m,z.montoMax,montoAdj>0?montoAdj:m);
+      return`<div style="padding:12px 16px;border-top:1px solid #131C28">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-weight:700;color:#D8E0EC;font-size:14px">${p} cuotas</span>
+          <span class="tag" style="background:${entra?"#00E5A020":"#FF3B3B20"};border:1px solid ${entra?"#00E5A044":"#FF3B3B44"};color:${entra?"#00E5A0":"#FF3B3B"}">${entra?"✓ Entra":"✗ Supera límite"}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          ${[["Cuota estimada",fmtP(cuota),entra?"#00E5A0":"#FF6B2B"],["Cuota máx. (30%)",fmtP(cuotaMax),"#3A4A60"],["Monto aprobado",fmtP(Math.min(montoFinal,z.montoMax)),"#FFB800"],["TNA aplicada",(tna*100).toFixed(0)+"%","#3A4A60"]].map(([k,v,c])=>`
+            <div style="background:#131C28;border-radius:8px;padding:8px 10px">
+              <div style="font-size:10px;color:#3A4A60;margin-bottom:2px">${k}</div>
+              <div class="mono" style="font-size:13px;color:${c};font-weight:700">${v}</div>
+            </div>`).join("")}
+        </div>
+      </div>`}).join("");
+  }else{tabla.style.display="none"}
+}
+
+function buildZonas(){
+  const cont=document.getElementById("zonas-container");
+  cont.innerHTML=ZONAS.map(z=>`
+    <div style="background:#101828;border:1px solid ${z.color}33;border-radius:12px;margin-bottom:12px;overflow:hidden">
+      <div style="padding:14px 16px;background:${z.color}10;border-bottom:1px solid ${z.color}22">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div class="mono" style="font-size:9px;letter-spacing:3px;color:${z.color};margin-bottom:4px">ZONA ${z.tag}</div>
+            <div style="font-size:15px;font-weight:700;color:#D8E0EC">${z.titulo}</div>
+            <div class="mono" style="font-size:11px;color:${z.color};margin-top:3px">${z.decision}</div>
+          </div>
+          <div style="background:${z.color}20;border:1px solid ${z.color}44;border-radius:10px;padding:6px 12px;text-align:center">
+            <div class="mono" style="font-size:10px;color:${z.color}">SCORE</div>
+            <div class="mono" style="font-size:18px;font-weight:700;color:${z.color}">${z.min}–${z.max}</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:#5A7090;margin-top:8px;line-height:1.5">${z.desc}</div>
+      </div>
+      ${z.montoMax>0?`<div style="padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        ${[["Monto mínimo",fmtP(z.montoMax*0.3)],["Monto máximo",fmtP(z.montoMax)],["Plazos",z.plazos.join("/")+  " cuotas"],["Ajuste TNA",z.tnaAdj>0?"+"+  (z.tnaAdj*100).toFixed(0)+"%":"Sin ajuste"]].map(([k,v])=>`
+          <div style="background:#131C28;border-radius:8px;padding:8px 10px">
+            <div style="font-size:10px;color:#3A4A60;margin-bottom:2px">${k}</div>
+            <div style="font-size:13px;color:${z.color};font-weight:700">${v}</div>
+          </div>`).join("")}
+      </div>`:'<div style="padding:12px 16px;font-size:13px;color:#FF3B3B">Sin productos. Reinicio posible en 6 meses.</div>'}
+    </div>`).join("");
+}
+
+function buildChecklist(){
+  const cont=document.getElementById("checklist-container");
+  cont.innerHTML=PASOS.map(paso=>{
+    const abierto=pasoAbierto===paso.n;
+    const hechos=paso.items.filter((_,i)=>checks[paso.n+"_"+i]).length;
+    const pct=Math.round(hechos/paso.items.length*100);
+    return`<div style="background:#101828;border:1px solid ${paso.color}33;border-radius:12px;margin-bottom:12px;overflow:hidden">
+      <div onclick="togglePaso('${paso.n}')" style="padding:13px 16px;cursor:pointer;display:flex;align-items:center;gap:10px">
+        <div style="background:${paso.color};color:#000;font-family:monospace;font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;flex-shrink:0">${paso.n}</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:#D8E0EC">${paso.titulo}</div>
+          <div style="font-size:11px;color:#3A4A60">${paso.sub}</div>
+          <div style="background:#131C28;border-radius:999px;height:4px;margin-top:5px;overflow:hidden">
+            <div style="background:${paso.color};width:${pct}%;height:100%;border-radius:999px;transition:width .3s"></div>
+          </div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div class="mono" style="font-size:12px;color:${paso.color}">${hechos}/${paso.items.length}</div>
+          <div style="font-size:9px;color:#3A4A60">${abierto?"▲":"▼"}</div>
+        </div>
+      </div>
+      ${abierto?`<div style="border-top:1px solid ${paso.color}22">
+        ${paso.items.map((item,i)=>{
+          const done=!!checks[paso.n+"_"+i];
+          return`<div onclick="toggleCheck('${paso.n}',${i})" style="display:flex;align-items:flex-start;gap:10px;padding:11px 16px;border-bottom:1px solid #131C28;cursor:pointer;background:${done?"#0D1A10":"transparent"}">
+            <div style="width:20px;height:20px;border-radius:5px;border:2px solid ${done?paso.color:"#253040"};background:${done?paso.color:"transparent"};flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center">
+              ${done?'<span style="font-size:11px;color:#000;font-weight:900">✓</span>':""}
+            </div>
+            <div style="font-size:12px;color:${done?"#D8E0EC":"#5A7090"};line-height:1.4;text-decoration:${done?"line-through":"none"}">${item}</div>
+          </div>`}).join("")}
+        ${hechos===paso.items.length?`<div style="padding:11px 16px;background:${paso.color}15;text-align:center;font-size:13px;color:${paso.color};font-weight:700">✓ Paso completado</div>`:""}
+      </div>`:""}
+    </div>`}).join("");
+}
+
+function togglePaso(n){pasoAbierto=pasoAbierto===n?null:n;buildChecklist()}
+function toggleCheck(paso,i){const k=paso+"_"+i;checks[k]=!checks[k];buildChecklist()}
+function resetChecklist(){checks={};buildChecklist()}
+
+function showTab(tab){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.querySelectorAll(".navbtn").forEach(b=>b.classList.remove("active"));
+  document.getElementById("s-"+tab).classList.add("active");
+  document.getElementById("nb-"+tab).classList.add("active");
+}
+
+// Init
+buildScoring();updateScoreUI();buildZonas();buildChecklist();
+</script>
+</body>
+</html>
